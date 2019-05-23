@@ -39,7 +39,7 @@ if(!in_array($team, $teams)){
 ////////////////////////////////
   if(isset($_POST['group_id'])){
 
-
+      $table_alpha = $_SESSION["table_alpha"];
       $del = $_POST['name_group'];
       $del_group = $del;
 
@@ -55,7 +55,7 @@ if(!in_array($team, $teams)){
         }
       }
 
-      $sql = "DELETE FROM alpha WHERE name = '$del' ";
+      $sql = "DELETE FROM $table_alpha WHERE name = '$del' ";
       $stmt = $pdo->prepare($sql);
       $stmt->execute();
       //////////////////////////////////
@@ -123,10 +123,10 @@ if(!in_array($team, $teams)){
 //////////////// add group///////
 ////////////////////////////////
 if(isset($_POST['add_group'])){
-  $table = 'alpha';
-  $exist =new Exist($pdo, $table);
+  $table_alpha = $_SESSION["table_alpha"];
+  $exist =new Exist($pdo, $table_alpha);
   if(!$exist->tableExists()){
-  $sql = "CREATE TABLE `$db`.`$table` (
+  $sql = "CREATE TABLE `$db`.`$table_alpha` (
      `id` INT(11) NOT NULL AUTO_INCREMENT ,
      `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
      PRIMARY KEY  (`id`)) ENGINE = MyISAM CHARSET=utf8 COLLATE utf8_general_ci";
@@ -134,7 +134,7 @@ if(isset($_POST['add_group'])){
      $stmt->execute();
   }
     $alphabet = range('A','Z');
-     $stmt = $pdo->query("SELECT `name` FROM `$table`");
+     $stmt = $pdo->query("SELECT `name` FROM `$table_alpha`");
      $group = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
     $identical = new Identical($alphabet, $group);
@@ -144,7 +144,7 @@ if(isset($_POST['add_group'])){
     $key = current($arr3);
 
     if(in_array($key, $alphabet)){
-      $sql = $pdo->prepare("INSERT INTO `$table` (name) VALUES ('$key')");
+      $sql = $pdo->prepare("INSERT INTO `$table_alpha` (name) VALUES ('$key')");
       $sql->execute();
     }
     $create_key = new Exist($pdo, $key);
