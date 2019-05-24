@@ -6,14 +6,18 @@ require_once 'Class/Exist.php';
 
 $table = $_GET['name'];
 $_SESSION['table_name'] = $_GET['name'];
-
+$counters = $table . '_count';
+if (!isset($_SESSION["$counters"])){
+$_SESSION["$counters"]=0;
+}
+session_write_close();
 
 $exist = new Exist($pdo, $table);
 if($exist->tableExists()) {
   ?>
   <form action="redirect.php" method="post">
     <input type='text' required name="team">
-    <input type="submit" name="Add" value="Add">
+    <input type="submit" name="add_team" value="Add">
   </form>
 
   <?php
@@ -34,31 +38,26 @@ echo $res . '</table>';
 ///////////////////////////////////////
 //////////////vuvod table/////////////
 ////////////////////////////////////
-$counters = $table . '_count';
+
 $members=$pdo->query("SELECT COUNT(*) as count FROM $table")->fetchColumn();
 
-if (!isset($_SESSION["$counters"])){
-$_SESSION["$counters"]=0;
-}
 
 if ($_SESSION["$counters"] < 1 && $members > 1){
 ?>
    <form action="redirect.php" method="post">
-     <input type="hidden" name="gen" value="<?=$table?>">
      <input  type="submit" name="generate" value="Generate">
    </form>
 
  <?php
 }else { ?>
    <form action="" method="post">
-     <input type="hidden" name="gen" value="<?=$table?>">
      <input disabled type="submit" name="generate" value="Generate">
    </form>
 
 <?php }
 
 //<-------------------------------------------------------------------------------------------------------------------------------//
-  $table = $_GET['name'];
+
   $generate = $table . $table;
   $addGenerate = new Exist($pdo, $generate);
   if($addGenerate->tableExists()){

@@ -1,12 +1,3 @@
-<?php
-session_start();
-
-if(empty($_SESSION["table_alpha"])){
-  $_SESSION["table_alpha"] = 'alpha';
-
-}
-$table_alpha = $_SESSION["table_alpha"]
-?>
 <form action="redirect.php" method="POST">
 <input type="submit" name="add_group" value="Add group"/>
 </form>

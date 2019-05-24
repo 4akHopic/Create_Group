@@ -6,124 +6,26 @@ if(isset($_SERVER['HTTP_REFERER'])) {
 }
 
 
-
 require_once 'DataBase_Connection/PDO_DB_Connect.php';
 require_once 'Class/Identical.php';
 require_once 'Class/Exist.php';
 require_once 'Class/Toss.php';
 require_once 'Class/NoEmpty.php';
 
-////////////////////////////
-////////addCommand/////////
-///////////////////////////
-if(isset($_POST['team'])){
-$team = $_POST['team'];
-$table = $_SESSION['table_name'];
-
-$stmt = $pdo->query("SELECT `team` FROM `$table`");
-$teams = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-
-if(!in_array($team, $teams)){
-  $sql = $pdo->prepare("INSERT INTO `$table` (team) VALUES ('$team')");
-  $sql->execute();
-}
-}
-////////////////////////////
-////////addCommand/////////
-///////////////////////////
+$table_name = $_SESSION['table_name'];
+$generate = $table_name . $table_name;
 
 
 
-//////////////////////////////////
-//////////////// del group ///////
-////////////////////////////////
-  if(isset($_POST['group_id'])){
-
-      $table_alpha = $_SESSION["table_alpha"];
-      $del = $_POST['name_group'];
-      $del_group = $del;
-
-      $exist = new Exist($pdo, $del);
-      if($exist->tableExists()){
-        $sql = "DROP TABLE $del";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-
-        $counters = $del . '_count';
-        if (isset($_SESSION["$counters"])){
-          unset($_SESSION["$counters"]);
-        }
-      }
-
-      $sql = "DELETE FROM $table_alpha WHERE name = '$del' ";
-      $stmt = $pdo->prepare($sql);
-      $stmt->execute();
-      //////////////////////////////////
-      //////////////// del group group///////
-      ////////////////////////////////
-      $del_grouptable = $del . $del;
-      $exist = new Exist($pdo, $del_grouptable);
-      if($exist->tableExists()){
-        $sql = "DROP TABLE $del_grouptable";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-      }
-
-      }
-      //////////////////////////////////
-      //////////////// del group group///////
-      ////////////////////////////////
-
-//////////////////////////////////
-//////////////// del group///////
-////////////////////////////////
-
-
-
-/////////////////////////////////
-//////////////// del command from AA///////
-////////////////////////////////
-  if(isset($_POST['id_addCommand'])){
-    $name = $_POST['team'];
-    $table = $_SESSION['table_name'];
-    $generate = $table . $table;
-
-    $exist = new Exist($pdo, $generate);
-      if($exist->tableExists()) {
-
-      $poisk = new NoEmpty($pdo, $generate, $name);
-      if($poisk->in_DB()){
-
-      $sql = "DELETE FROM $generate WHERE home =:home OR away=:away";
-      $stmt = $pdo->prepare($sql);
-      $stmt->bindParam(':home', $name);
-      $stmt->bindParam(':away', $name);
-      $stmt->execute();
-
-      $sql = "DELETE FROM $table WHERE team=:team";
-      $stmt = $pdo->prepare($sql);
-      $stmt->bindParam(':team', $name);
-      $stmt->execute();
-    }
-    ///////not table "AA", but can delete value from table "A"
-    }else {
-    $sql = "DELETE FROM $table WHERE team=:team";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':team', $name);
-    $stmt->execute();
-  }
-      }
-      //////////////////////////////////
-      //////////////// del command from AA///////
-      ////////////////////////////////
-
-
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////Home.php///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
 //////////////// add group///////
 ////////////////////////////////
 if(isset($_POST['add_group'])){
-  $table_alpha = $_SESSION["table_alpha"];
+  // $table_alpha = $_SESSION["table_alpha"];
   $exist =new Exist($pdo, $table_alpha);
   if(!$exist->tableExists()){
   $sql = "CREATE TABLE `$db`.`$table_alpha` (
@@ -163,6 +65,110 @@ if(isset($_POST['add_group'])){
 ////////////////////////////////
 
 
+//////////////////////////////////
+//////////////// del group ///////
+////////////////////////////////
+  if(isset($_POST['group_id'])){
+
+      $del = $_POST['name_group'];
+      $del_group = $del;
+
+      $exist = new Exist($pdo, $del);
+      if($exist->tableExists()){
+        $sql = "DROP TABLE $del";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+
+        $counters = $del . '_count';
+        if (isset($_SESSION["$counters"])){
+          unset($_SESSION["$counters"]);
+        }
+      }
+
+      $sql = "DELETE FROM $table_alpha WHERE name = '$del' ";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute();
+      //////////////////////////////////
+      //////////////// del group group///////
+      ////////////////////////////////
+      $del_grouptable = $del . $del;
+      $exist = new Exist($pdo, $del_grouptable);
+      if($exist->tableExists()){
+        $sql = "DROP TABLE $del_grouptable";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+      }
+
+      }
+      //////////////////////////////////
+      //////////////// del group group///////
+      ////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////Home.php///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////addCommand.php///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////
+////////addCommand/////////
+///////////////////////////
+if(isset($_POST['add_team'])){
+$team = $_POST['team'];
+
+$stmt = $pdo->query("SELECT `team` FROM `$table_name`");
+$teams = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+if(!in_array($team, $teams)){
+  $sql = $pdo->prepare("INSERT INTO `$table_name` (team) VALUES ('$team')");
+  $sql->execute();
+}
+}
+////////////////////////////
+////////addCommand/////////
+///////////////////////////
+
+
+/////////////////////////////////
+//////////////// del command from AA///////
+////////////////////////////////
+  if(isset($_POST['id_addCommand'])){
+    $name = $_POST['team'];
+
+    $exist = new Exist($pdo, $generate);
+      if($exist->tableExists()) {
+
+      $poisk = new NoEmpty($pdo, $generate, $name);
+      if($poisk->in_DB()){
+
+      $sql = "DELETE FROM $generate WHERE home =:home OR away=:away";
+      $stmt = $pdo->prepare($sql);
+      $stmt->bindParam(':home', $name);
+      $stmt->bindParam(':away', $name);
+      $stmt->execute();
+
+      $sql = "DELETE FROM $table_name WHERE team=:team";
+      $stmt = $pdo->prepare($sql);
+      $stmt->bindParam(':team', $name);
+      $stmt->execute();
+    }
+    ///////not table "AA", but can delete value from table "A"
+    }else {
+    $sql = "DELETE FROM $table_name WHERE team=:team";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':team', $name);
+    $stmt->execute();
+  }
+      }
+      //////////////////////////////////
+      //////////////// del command from AA///////
+      ////////////////////////////////
+
 
 
 
@@ -170,11 +176,10 @@ if(isset($_POST['add_group'])){
 ////////Create TABLE  Generate group/////////
 /////////////////////////////////////////////
 if(isset($_POST['generate'])){
-  // $_SESSION["count_"]++;
-  $tableName = $_SESSION['table_name'];
-  $generate = $tableName . $tableName;
-  $counters = $tableName . '_count';
+
+  $counters = $table_name . '_count';
   $_SESSION["$counters"]++;
+
   ///////////////////////////
   $exist = new Exist($pdo, $generate);
   if(!$exist->tableExists()){
@@ -196,7 +201,7 @@ if(isset($_POST['generate'])){
 ////////Generate group/////////
 ///////////////////////////
 
-$stmt = $pdo->query("SELECT `team` FROM `$tableName`");
+$stmt = $pdo->query("SELECT `team` FROM `$table_name`");
 $members = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 /* Начало транзакции, отключение автоматической фиксации */
 $pdo->beginTransaction();
@@ -250,9 +255,6 @@ $id_rez = $_POST['id_rez'];
 $home_rez = $_POST['home_rez'];
 $away_rez =  $_POST['away_rez'];
 
-$tableName = $_SESSION['table_name'];
-$generate = $tableName . $tableName;
-
 $data = [
   'id_rez' => $id_rez,
     'home_rez' => $home_rez,
@@ -267,3 +269,7 @@ $stmt->execute($data);
 ///////////////////////////////////////
 //////////////UPdate table/////////////
 /////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////addCommand.php///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////

@@ -13,4 +13,5 @@ $host = '127.0.0.1';
     ];
     $pdo = new PDO($dsn, $user, $pass, $opt);
 
+$table_alpha = 'alpha'; //master database table
      ?>
