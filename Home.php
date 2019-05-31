@@ -11,7 +11,8 @@
 <body>
   <div class="center-auto">
 <form action="redirect.php" method="POST">
-<input class="sub" type="submit" name="add_group" value="Add group"/>
+  <p>Groups:</p>
+<input class="sub" type="submit" name="add_group" value="Add"/>
 </form>
 </div>
 
@@ -23,7 +24,7 @@ require_once 'Class/Exist.php';
 $exist = new Exist($pdo, $table_alpha);
 if($exist->tableExists()){
 ///////////////////////////////////////
-//////////////vuvod table/////////////
+//////////////show table/////////////
 /////////////////////////////////////
 
 
@@ -34,14 +35,14 @@ if($exist->tableExists()){
    foreach ($groupbase as $val) {
      $res .= '<tr>';
      $res .= '<td>';
-     $res .= '<form action="redirect.php" method="POST"><input hidden="hidden" type="text" name="name_group" value="'. $val['name'] .'"/></td><td><a href="addCommand.php?name='. $val['name'] .'">'.$val['name'].'</a><input class="sendsubmit" type="submit" name="group_id"/></form>';
+     $res .= '<form action="redirect.php" method="POST"><input hidden="hidden" type="text" name="name_group" value="'. $val['name'] .'"/></td><td><a href="addCommand.php?name='. $val['name'] .'">'.$val['name'].'</a><input class="sendsubmit" type="submit" name="del_group"/></form>';
      $res .= '</td>';
      $res .= '</tr>';
    }
 
    echo $res .= '</table></div>';
 ///////////////////////////////////////
-//////////////vuvod table/////////////
+//////////////show table/////////////
 /////////////////////////////////////
 }
 ?>

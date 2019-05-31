@@ -12,7 +12,7 @@ class NoEmpty{
   }
 
 public function in_DB(){
-  $stmt = $this->pdo->prepare("SELECT home_rez FROM $this->table WHERE home=:home OR away=:away");
+  $stmt = $this->pdo->prepare("SELECT home_rez, away_rez  FROM $this->table WHERE home=:home OR away=:away");
   $stmt->execute(['home' => $this->team, 'away' => $this->team]);
   $data = $stmt->fetchAll();
 var_dump($data);

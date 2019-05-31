@@ -14,6 +14,7 @@ require_once 'Class/NoEmpty.php';
 
 $table_name = $_SESSION['table_name'];
 $generate = $table_name . $table_name;
+session_write_close();
 
 
 
@@ -25,7 +26,7 @@ $generate = $table_name . $table_name;
 //////////////// add group///////
 ////////////////////////////////
 if(isset($_POST['add_group'])){
-  // $table_alpha = $_SESSION["table_alpha"];
+
   $exist =new Exist($pdo, $table_alpha);
   if(!$exist->tableExists()){
   $sql = "CREATE TABLE `$db`.`$table_alpha` (
@@ -68,21 +69,15 @@ if(isset($_POST['add_group'])){
 //////////////////////////////////
 //////////////// del group ///////
 ////////////////////////////////
-  if(isset($_POST['group_id'])){
+  if(isset($_POST['del_group'])){
 
       $del = $_POST['name_group'];
-      $del_group = $del;
 
       $exist = new Exist($pdo, $del);
       if($exist->tableExists()){
         $sql = "DROP TABLE $del";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-
-        $counters = $del . '_count';
-        if (isset($_SESSION["$counters"])){
-          unset($_SESSION["$counters"]);
-        }
       }
 
       $sql = "DELETE FROM $table_alpha WHERE name = '$del' ";
@@ -128,6 +123,7 @@ if(!in_array($team, $teams)){
   $sql = $pdo->prepare("INSERT INTO `$table_name` (team) VALUES ('$team')");
   $sql->execute();
 }
+
 }
 ////////////////////////////
 ////////addCommand/////////
@@ -137,7 +133,7 @@ if(!in_array($team, $teams)){
 /////////////////////////////////
 //////////////// del command from AA///////
 ////////////////////////////////
-  if(isset($_POST['id_addCommand'])){
+  if(isset($_POST['del_team'])){
     $name = $_POST['team'];
 
     $exist = new Exist($pdo, $generate);
@@ -176,9 +172,6 @@ if(!in_array($team, $teams)){
 ////////Create TABLE  Generate group/////////
 /////////////////////////////////////////////
 if(isset($_POST['generate'])){
-
-  $counters = $table_name . '_count';
-  $_SESSION["$counters"]++;
 
   ///////////////////////////
   $exist = new Exist($pdo, $generate);
@@ -249,22 +242,37 @@ $pdo->commit();
 ///////////////////////////////////////
 //////////////UPdate table/////////////
 /////////////////////////////////////
-if(isset($_POST['update_rez'])){
-if ((in_array($_POST['home_rez'], range(1,9999)) || $_POST['home_rez'] == '0') && (in_array($_POST['away_rez'], range(1,9999)) || $_POST['away_rez'] == '0')) {
-$id_rez = $_POST['id_rez'];
-$home_rez = $_POST['home_rez'];
-$away_rez =  $_POST['away_rez'];
 
-$data = [
-  'id_rez' => $id_rez,
-    'home_rez' => $home_rez,
-    'away_rez' => $away_rez,
-];
-$sql = "UPDATE `$generate` SET home_rez=:home_rez, away_rez=:away_rez WHERE id_rez=:id_rez";
-$stmt= $pdo->prepare($sql);
-$stmt->execute($data);
+
+  if(isset($_POST['update_rez'])){
+    $update = $_POST['update'];
+
+  /* Начало транзакции, отключение автоматической фиксации */
+  $pdo->beginTransaction();
+
+  /* Вставка множества записей по принципу "все или ничего" */
+
+      $sql = "UPDATE $generate
+          SET home_rez=:home_rez, away_rez=:away_rez
+          WHERE id_rez=:id_rez";
+
+  $sth = $pdo->prepare($sql);
+
+    foreach ($update as $key) {
+      if ((in_array($key['home_rez'], range(1,9999)) || $key['home_rez'] == '0') && (in_array($key['away_rez'], range(1,9999)) || $key['away_rez'] == '0')) {
+      $sth->execute([
+          $key['home_rez'],
+          $key['away_rez'],
+          $key['id_rez'],
+      ]);
+    }
+  }
+  /* Фиксация изменений */
+  $pdo->commit();
+
+  /* Соединение с базой данных снова в режиме автоматической фиксации */
 }
-}
+
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////
 //////////////UPdate table/////////////
